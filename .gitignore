@@ -1,0 +1,39 @@
+# Node.js dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Production files
+*.pack.gz
+*.map
+
+# Environment variables
+.env*
+!.env.example
+
+# Vercel / Netlify / deployment configs (if used)
+.vercel/
+.netlify/
+
+# Optional caches
+.cache/
+.next/cache/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Misc
+*.log
+
