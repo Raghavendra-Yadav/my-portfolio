@@ -1,20 +1,16 @@
 import React from 'react';
 import Image from 'next/image';
-import {
-  FaArrowUpRightFromSquare,
-  FaFileCircleExclamation,
-} from 'react-icons/fa6';
+import { FaArrowUpRightFromSquare, FaFileCircleExclamation } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 
 const projects = [
   {
     title: 'friendSpot',
-    description:
-      'Social networking site solely created by me. Currently not available on Web.',
+    description: 'Social networking site solely created by me. Currently not available on Web.',
     tags: ['Development', 'PHP', 'MySQL'],
     image: '/images/projectImages/FS.png',
     link: '#',
-    icon: <FaFileCircleExclamation />,
+    icon: FaFileCircleExclamation,
   },
   {
     title: 'Endurance Software Solutions',
@@ -22,7 +18,7 @@ const projects = [
     tags: ['Design', 'Development', 'Bootstrap'],
     image: '/images/projectImages/Endurance.png',
     link: 'https://raghav111.github.io/Endurance/',
-    icon: <FaArrowUpRightFromSquare />,
+    icon: FaArrowUpRightFromSquare,
   },
   {
     title: 'Youtube Subtitles Extractor',
@@ -30,7 +26,7 @@ const projects = [
     tags: ['Development', 'Node.js'],
     image: '/images/projectImages/YoutubeSubtitles.png',
     link: 'https://youtubesubtitlesextractor.herokuapp.com/',
-    icon: <FaArrowUpRightFromSquare />,
+    icon: FaArrowUpRightFromSquare,
   },
   {
     title: 'Product Preview Card Component',
@@ -38,7 +34,7 @@ const projects = [
     tags: ['Development'],
     image: '/images/projectImages/Product.png',
     link: 'https://raghav111.github.io/4.Product-preview-card-component/',
-    icon: <FaArrowUpRightFromSquare />,
+    icon: FaArrowUpRightFromSquare,
   },
 ];
 
@@ -130,6 +126,7 @@ function ProjectCard({
   project: (typeof projects)[0];
   idx: number;
 }) {
+  const Icon = project.icon;
   return (
     <motion.div
       className="flex items-stretch gap-6 bg-white/80 dark:bg-gray-900/70 shadow-2xl rounded-xl p-6 relative h-full"
@@ -180,7 +177,7 @@ function ProjectCard({
         >
           <span className="relative z-10">View</span>
           <span className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-            {project.icon}
+            <Icon />
           </span>
         </a>
       </div>

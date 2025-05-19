@@ -6,6 +6,8 @@ import Profile from '@/components/Profile';
 import Education from '@/components/Education';
 import Abilities from '@/components/Abilities';
 import Projects from '@/components/Projects';
+import Achievements from '@/components/Achievements';
+import Certificates from '@/components/Certificates';
 
 const Home: React.FC = () => {
   return (
@@ -21,6 +23,10 @@ const Home: React.FC = () => {
         <Education />
         <Abilities />
         <Projects />
+        <Achievements />
+        <Certificates />
+        {/* Add more sections as needed */}
+        {/* Example: <Contact /> */}
         {/* Add more components as needed */}
       </Layout>
     </>
