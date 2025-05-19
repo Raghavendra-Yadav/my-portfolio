@@ -50,19 +50,27 @@ export default function Education() {
         }}
       />
 
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 relative">
+        {/* Gradient behind heading */}
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-24 rounded-full blur-2xl opacity-60 z-0"
+          style={{
+            background: 'linear-gradient(90deg, #ff80b5 0%, #9089fc 100%)',
+          }}
+        />
         <h2
-          className="text-4xl font-bold"
+          className="text-4xl font-bold relative z-10"
           style={{ fontFamily: "'Roboto Slab', serif" }}
         >
           Education
         </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-400 mt-2 max-w-xl mx-auto">
+        <p className="text-lg text-gray-600 dark:text-gray-400 mt-2 max-w-xl mx-auto relative z-10">
           &ldquo;Protons give an atom its identity, electrons its
           personality.&rdquo;
           <br />– Bill Bryson, *A Short History of Nearly Everything*
         </p>
-        <hr className="mt-6 border-t-2 border-gray-300 dark:border-gray-600 w-24 mx-auto" />
+        <hr className="mt-6 border-t-2 border-gray-300 dark:border-gray-600 w-24 mx-auto relative z-10" />
       </div>
 
       <div className="space-y-12 max-w-5xl mx-auto">
