@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 
 // Gradient star style using inline SVG gradient for visibility
 const gradientStarClass = 'w-5 h-5 drop-shadow-sm';
@@ -207,11 +207,16 @@ const Abilities = () => {
   const [highlightedLang, setHighlightedLang] = useState<number | null>(null);
   const [highlightedTool, setHighlightedTool] = useState<number | null>(null);
 
+  // Add ref and inView for animation on viewport
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+
   const skills = [
     { title: 'HTML(5)', level: 5 },
     { title: 'CSS(3)', level: 5 },
     { title: 'Bootstrap Framework', level: 5 },
     { title: 'Javascript', level: 4 },
+    { title: 'Typescript', level: 4 },
     { title: 'Next.js', level: 4 },
     { title: 'React', level: 4 },
     { title: 'Node.js', level: 3, half: true }, // 3 full, 1 half, 1 empty
@@ -252,10 +257,11 @@ const Abilities = () => {
 
   return (
     <motion.section
+      ref={sectionRef}
       id="Abilities"
-      className="bg-gray-100 dark:bg-gray-900 text-black dark:text-white min-h-screen flex flex-col items-center justify-center px-4 py-12"
+      className="scroll-mt-16 bg-gray-100 dark:bg-gray-900 text-black dark:text-white min-h-screen flex flex-col items-center justify-center px-4 py-12"
       initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 1 }}
     >
       <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 md:p-12">
