@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Layout from '../components/Layout';
 import Hero from '../components/Hero';
 import Profile from '@/components/Profile';
+import Education from '@/components/Education';
 
 const Home: React.FC = () => {
   return (
@@ -15,6 +16,8 @@ const Home: React.FC = () => {
       <Layout>
         <Hero />
         <Profile />
+        <Education />
+        {/* Add more components as needed */}
       </Layout>
     </>
   );
