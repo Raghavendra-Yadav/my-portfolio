@@ -149,7 +149,7 @@ function EducationCard({
         </p>
         <div className="mt-2 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <span
-            className="inline-block w-5 h-5 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white"
+            className="w-5 h-5 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white"
             title="Location"
           >
             <FaMapMarkerAlt className="text-xs" />
