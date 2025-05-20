@@ -10,7 +10,7 @@ const navigation = [
   { name: 'Education', href: '#Education' },
   { name: 'Abilities', href: '#Abilities' },
   { name: 'Projects', href: '#Projects' },
-  { name: 'Blog', href: '#Blog' },
+  { name: 'Blog', href: '/blog' },
   { name: 'Contact', href: '#Contact' },
 ];
 
@@ -40,14 +40,16 @@ export default function Header() {
 
   // Active section tracking
   useEffect(() => {
-    const sectionOffsets = navigation.map((nav) => {
-      const el = document.querySelector(nav.href) as HTMLElement;
-      if (!el) return { name: nav.name, offset: Infinity }; // Handle missing elements
-      return { name: nav.name, offset: el.offsetTop - 100 }; // Adjust offset for better accuracy
-    });
+    const sectionOffsets = navigation
+      .filter((nav) => nav.href.startsWith('#')) // Only hash links
+      .map((nav) => {
+        const el = document.querySelector(nav.href) as HTMLElement;
+        if (!el) return { name: nav.name, offset: Infinity };
+        return { name: nav.name, offset: el.offsetTop - 100 };
+      });
 
     const onScroll = () => {
-      const scrollPos = window.scrollY + 100; // Adjust for header height or offset
+      const scrollPos = window.scrollY + 100;
       const current = sectionOffsets
         .filter((sec) => scrollPos >= sec.offset)
         .pop();
