@@ -49,13 +49,13 @@ const SlugNavbar = ({ children }: { children: React.ReactNode }) => {
         >
           {/* Back Button */}
           <div className="flex lg:flex-1 items-center gap-4">
-            <button
-              onClick={() => router.back()}
+            <Link
+              href="/blog"
               className="-m-1.5 p-1.5 ml-10 mr-4 text-gray-700 hover:text-indigo-600 dark:text-white flex items-center"
             >
               <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
               <span className="ml-2 text-sm font-semibold">Back</span>
-            </button>
+            </Link>
           </div>
 
           {/* Only dark mode toggle on right */}
@@ -94,13 +94,13 @@ const SlugNavbar = ({ children }: { children: React.ReactNode }) => {
           <div className="fixed inset-0 z-50" />
           <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full max-w-sm overflow-y-auto bg-white px-6 py-6 dark:bg-gray-900 sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
-              <button
-                onClick={() => router.back()}
+              <Link
+                href="/blog"
                 className="-m-1.5 p-1.5 text-gray-700 dark:text-white flex items-center"
               >
                 <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
                 <span className="ml-2 text-sm font-semibold">Back</span>
-              </button>
+              </Link>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
