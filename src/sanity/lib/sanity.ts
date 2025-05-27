@@ -6,6 +6,7 @@ const config = {
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   apiVersion: '2023-01-01',
   useCdn: true,
+  token: process.env.SANITY_API_TOKEN, // Optional, for write operations
 };
 
 export const sanityClient = createClient(config);
