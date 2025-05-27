@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['your-image-domain.com'], // Add your image domains here
+    domains: ['cdn.sanity.io'],
   },
   env: {
     SANITY_PROJECT_ID: process.env.SANITY_PROJECT_ID,

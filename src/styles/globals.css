@@ -7,3 +7,51 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Add to your global CSS file */
+.toc-progress-container {
+  position: fixed;
+  top: 6rem;
+  left: 2rem;
+  z-index: 40;
+  height: 60vh;
+  width: 16px;
+  transition: width 0.3s;
+  background: transparent;
+  display: flex;
+  align-items: flex-start;
+}
+
+.toc-progress-bar {
+  width: 4px;
+  border-radius: 2px;
+  background: #a78bfa; /* purple-400 */
+  transition: height 0.2s;
+  position: absolute;
+  left: 6px;
+  top: 0;
+}
+
+.toc-progress-container:hover,
+.toc-progress-container:focus-within {
+  width: 320px; /* Show ToC on hover */
+}
+
+.toc-toc-content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  margin-left: 24px;
+  width: 280px;
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1rem 1.25rem;
+  position: relative;
+}
+
+.toc-progress-container:hover .toc-toc-content,
+.toc-progress-container:focus-within .toc-toc-content {
+  opacity: 1;
+  pointer-events: auto;
+}
