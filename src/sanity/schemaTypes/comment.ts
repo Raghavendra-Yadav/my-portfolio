@@ -26,5 +26,17 @@ export default defineType({
       type: 'datetime',
       initialValue: () => new Date().toISOString(),
     }),
+    defineField({
+      name: 'likes',
+      title: 'Likes',
+      type: 'number',
+      initialValue: 0,
+    }),
+    defineField({
+      name: 'upvotes',
+      title: 'Upvotes',
+      type: 'number',
+      initialValue: 0,
+    }),
   ],
 });
