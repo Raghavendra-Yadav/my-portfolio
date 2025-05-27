@@ -1,12 +1,16 @@
 import React from 'react';
 import Image from 'next/image';
-import { FaArrowUpRightFromSquare, FaFileCircleExclamation } from 'react-icons/fa6';
+import {
+  FaArrowUpRightFromSquare,
+  FaFileCircleExclamation,
+} from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 
 const projects = [
   {
     title: 'friendSpot',
-    description: 'Social networking site solely created by me. Currently not available on Web.',
+    description:
+      'Social networking site solely created by me. Currently not available on Web.',
     tags: ['Development', 'PHP', 'MySQL'],
     image: '/images/projectImages/FS.png',
     link: '#',
@@ -147,8 +151,8 @@ function ProjectCard({
         <Image
           src={project.image}
           alt={project.title}
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
           className="rounded-xl"
         />
       </div>
