@@ -247,121 +247,24 @@ const BlogPost = ({ post }: { post: Post }) => {
 const CommentSection = ({ postId }: { postId: string }) => {
   const [comments, setComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [submitted, setSubmitted] = useState(false); // Add this line
   const [form, setForm] = useState({ name: '', email: '', comment: '' });
+  const [submitted, setSubmitted] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const [likes, setLikes] = useState<{ [id: string]: boolean }>({});
-  const [upvotes, setUpvotes] = useState<{ [id: string]: boolean }>({});
-  const [likeCounts, setLikeCounts] = useState<{ [id: string]: number }>({});
-  const [upvoteCounts, setUpvoteCounts] = useState<{ [id: string]: number }>(
-    {}
-  );
-
-  const fetchComments = async () => {
-    try {
-      const response = await fetch(`/api/comments?postId=${postId}`);
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        setComments(data);
-        const likeInit: { [id: string]: number } = {};
-        const upvoteInit: { [id: string]: number } = {};
-        data.forEach((c: any) => {
-          likeInit[c._id] = c.likes || 0;
-          upvoteInit[c._id] = c.upvotes || 0;
-        });
-        setLikeCounts(likeInit);
-        setUpvoteCounts(upvoteInit);
-      }
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-    setLoading(false);
-  };
 
   useEffect(() => {
-    fetchComments();
-    // Load saved likes/upvotes from localStorage
-    const savedLikes = JSON.parse(
-      localStorage.getItem('likedComments') || '{}'
-    );
-    const savedUpvotes = JSON.parse(
-      localStorage.getItem('upvotedComments') || '{}'
-    );
-    setLikes(savedLikes);
-    setUpvotes(savedUpvotes);
+    setLoading(true);
+    fetch(`/api/comments?postId=${postId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setComments(data);
+        } else {
+          setComments([]);
+        }
+      })
+      .catch(() => setComments([]))
+      .finally(() => setLoading(false));
   }, [postId]);
-
-  const handleLike = async (id: string) => {
-    const newLiked = !likes[id];
-
-    // Optimistically update UI
-    setLikes((prev) => ({ ...prev, [id]: newLiked }));
-    setLikeCounts((prev) => ({
-      ...prev,
-      [id]: Math.max(0, (prev[id] || 0) + (newLiked ? 1 : -1)),
-    }));
-
-    try {
-      const response = await fetch('/api/comments/like', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId: id, like: newLiked }),
-      });
-
-      if (!response.ok) throw new Error('Failed to update like');
-
-      const data = await response.json();
-      setLikeCounts((prev) => ({ ...prev, [id]: data.likes }));
-
-      // Save to localStorage
-      const newLikes = { ...likes, [id]: newLiked };
-      localStorage.setItem('likedComments', JSON.stringify(newLikes));
-    } catch (error) {
-      // Revert on error
-      setLikes((prev) => ({ ...prev, [id]: !newLiked }));
-      setLikeCounts((prev) => ({
-        ...prev,
-        [id]: Math.max(0, (prev[id] || 0) + (newLiked ? -1 : 1)),
-      }));
-      console.error('Error updating like:', error);
-    }
-  };
-
-  const handleUpvote = async (id: string) => {
-    const newUpvoted = !upvotes[id];
-
-    // Optimistically update UI
-    setUpvotes((prev) => ({ ...prev, [id]: newUpvoted }));
-    setUpvoteCounts((prev) => ({
-      ...prev,
-      [id]: Math.max(0, (prev[id] || 0) + (newUpvoted ? 1 : -1)),
-    }));
-
-    try {
-      const response = await fetch('/api/comments/upvote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId: id, upvote: newUpvoted }),
-      });
-
-      if (!response.ok) throw new Error('Failed to update upvote');
-
-      const data = await response.json();
-      setUpvoteCounts((prev) => ({ ...prev, [id]: data.upvotes }));
-
-      // Save to localStorage
-      const newUpvotes = { ...upvotes, [id]: newUpvoted };
-      localStorage.setItem('upvotedComments', JSON.stringify(newUpvotes));
-    } catch (error) {
-      // Revert on error
-      setUpvotes((prev) => ({ ...prev, [id]: !newUpvoted }));
-      setUpvoteCounts((prev) => ({
-        ...prev,
-        [id]: Math.max(0, (prev[id] || 0) + (newUpvoted ? -1 : 1)),
-      }));
-      console.error('Error updating upvote:', error);
-    }
-  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -376,7 +279,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, postId }),
     });
-    setSubmitted(true); // This will show the success message
+    setSubmitted(true);
     formRef.current?.reset();
   };
 
@@ -420,52 +323,6 @@ const CommentSection = ({ postId }: { postId: string }) => {
                   </div>
                   <div className="pl-4 border-l-4 border-indigo-200 dark:border-indigo-700 text-gray-800 dark:text-gray-200 mt-1 text-base leading-relaxed">
                     {c.comment}
-                  </div>
-                  {/* Like & Upvote buttons */}
-                  <div className="flex gap-6 mt-3 ml-2">
-                    <button
-                      type="button"
-                      disabled={!!likes[c._id]}
-                      className={`flex items-center gap-1 text-pink-500 hover:text-pink-600 transition-colors focus:outline-none group`}
-                      onClick={() => handleLike(c._id)}
-                      aria-label="Like"
-                    >
-                      <FaHeart
-                        className={
-                          likes[c._id]
-                            ? 'fill-pink-500 drop-shadow'
-                            : 'fill-none stroke-pink-500'
-                        }
-                        size={18}
-                        style={{
-                          filter: likes[c._id]
-                            ? 'drop-shadow(0 0 2px #ec4899)'
-                            : undefined,
-                          transition: 'filter 0.2s',
-                        }}
-                      />
-                      <span className="text-xs font-semibold group-hover:scale-110 transition-transform">
-                        {likeCounts[c._id] || 0}
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`flex items-center gap-1 text-indigo-500 hover:text-indigo-600 transition-colors focus:outline-none group`}
-                      onClick={() => handleUpvote(c._id)}
-                      aria-label="Upvote"
-                    >
-                      <FaArrowUp
-                        className={
-                          upvotes[c._id]
-                            ? 'fill-indigo-500'
-                            : 'fill-none stroke-indigo-500'
-                        }
-                        size={16}
-                      />
-                      <span className="text-xs font-semibold group-hover:scale-110 transition-transform">
-                        {upvoteCounts[c._id] || 0}
-                      </span>
-                    </button>
                   </div>
                 </div>
               </li>
