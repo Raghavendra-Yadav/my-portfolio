@@ -6,9 +6,8 @@ import {
   Bars3Icon,
   XMarkIcon,
   ArrowLeftIcon,
-  MoonIcon,
-  SunIcon,
 } from '@heroicons/react/24/outline';
+import { HomeIcon, MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
 
 const SlugNavbar = ({ children }: { children: React.ReactNode }) => {
@@ -55,6 +54,17 @@ const SlugNavbar = ({ children }: { children: React.ReactNode }) => {
             >
               <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
               <span className="ml-2 text-sm font-semibold">Back</span>
+            </Link>
+          </div>
+
+          {/* Home Button in the middle */}
+          <div className="flex-1 flex justify-center">
+            <Link
+              href="/"
+              className="flex items-center text-base font-semibold text-gray-700 hover:text-indigo-600 dark:text-white px-4 py-2 rounded transition-colors"
+              aria-label="Home"
+            >
+              <HomeIcon className="h-6 w-6" aria-hidden="true" />
             </Link>
           </div>
 
