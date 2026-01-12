@@ -34,5 +34,20 @@ export default defineType({
       title: 'Published At',
       type: 'datetime',
     }),
+    defineField({
+      name: 'coverImage',
+      title: 'Cover Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        },
+      ],
+    }),
   ],
 });

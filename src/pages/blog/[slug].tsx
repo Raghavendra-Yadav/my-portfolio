@@ -32,6 +32,12 @@ interface TocItem {
   level: number;
 }
 
+interface Block {
+  _type: string;
+  children?: { text: string }[];
+  style?: string;
+}
+
 function estimateReadTime(text: string) {
   const wordsPerMinute = 200;
   const words = text.split(/\s+/).length;
@@ -117,6 +123,11 @@ const AnimatedSuccess = () => (
     </p>
   </div>
 );
+
+interface VotedComments {
+  likes: string[];
+  upvotes: string[];
+}
 
 const BlogPost = ({ post }: { post: Post }) => {
   const [scroll, setScroll] = useState(0);
@@ -250,21 +261,104 @@ const CommentSection = ({ postId }: { postId: string }) => {
   const [form, setForm] = useState({ name: '', email: '', comment: '' });
   const [submitted, setSubmitted] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const [votedComments, setVotedComments] = useState<VotedComments>({
+    likes: [],
+    upvotes: [],
+  });
+  const [votingInProgress, setVotingInProgress] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const eventSourceRefs = useRef<{ [key: string]: EventSource }>({});
+  const userIdRef = useRef<string>('');
+  const commentStatesRef = useRef<{ [key: string]: any }>({});
 
+  // Initialize user ID and voted comments from localStorage
+  useEffect(() => {
+    // Generate and store user ID if not exists
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+      userId = crypto.randomUUID();
+      localStorage.setItem('userId', userId);
+    }
+    userIdRef.current = userId;
+
+    // Load voted comments from localStorage using userId
+    const storedVotes = localStorage.getItem(`votes_${postId}_${userId}`);
+    if (storedVotes) {
+      setVotedComments(JSON.parse(storedVotes));
+    }
+  }, [postId]);
+
+  // Initial comments fetch
   useEffect(() => {
     setLoading(true);
     fetch(`/api/comments?postId=${postId}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
+          // Store initial comment states
+          data.forEach((comment) => {
+            commentStatesRef.current[comment._id] = { ...comment };
+          });
           setComments(data);
+          // Set up SSE for each comment
+          data.forEach((comment) => {
+            setupEventSource(comment._id);
+          });
         } else {
           setComments([]);
         }
       })
       .catch(() => setComments([]))
       .finally(() => setLoading(false));
+
+    // Cleanup function
+    return () => {
+      Object.values(eventSourceRefs.current).forEach((eventSource) => {
+        eventSource.close();
+      });
+    };
   }, [postId]);
+
+  const setupEventSource = (commentId: string) => {
+    // Close existing event source if any
+    if (eventSourceRefs.current[commentId]) {
+      eventSourceRefs.current[commentId].close();
+    }
+
+    // Create new event source
+    const eventSource = new EventSource(`/api/comments/${commentId}/events`);
+    eventSourceRefs.current[commentId] = eventSource;
+
+    eventSource.onmessage = (event) => {
+      const updatedComment = JSON.parse(event.data);
+      // Update the stored comment state
+      commentStatesRef.current[commentId] = {
+        ...commentStatesRef.current[commentId],
+        likes: updatedComment.likes,
+        upvotes: updatedComment.upvotes,
+      };
+
+      // Update the comments state with the new counts
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment._id === commentId
+            ? {
+                ...comment,
+                likes: updatedComment.likes,
+                upvotes: updatedComment.upvotes,
+              }
+            : comment
+        )
+      );
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+      // Attempt to reconnect after a delay
+      setTimeout(() => setupEventSource(commentId), 5000);
+    };
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -281,6 +375,56 @@ const CommentSection = ({ postId }: { postId: string }) => {
     });
     setSubmitted(true);
     formRef.current?.reset();
+  };
+
+  const handleVote = async (commentId: string, type: 'like' | 'upvote') => {
+    const userId = userIdRef.current;
+    if (!userId) return;
+
+    // Check if voting is in progress for this comment
+    const voteKey = `${commentId}_${type}`;
+    if (votingInProgress[voteKey]) {
+      console.log('Vote in progress, ignoring click');
+      return;
+    }
+
+    const voteTypeKey = type === 'like' ? 'likes' : 'upvotes';
+    const hasVoted = votedComments[voteTypeKey].includes(commentId);
+    const action = hasVoted ? 'remove' : 'add';
+
+    // Set voting in progress
+    setVotingInProgress((prev) => ({ ...prev, [voteKey]: true }));
+
+    try {
+      const response = await fetch(`/api/comments/${commentId}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, action }),
+      });
+
+      if (response.ok) {
+        // Update voted comments in state and localStorage using userId
+        const newVotedComments = {
+          ...votedComments,
+          [voteTypeKey]:
+            action === 'add'
+              ? [...votedComments[voteTypeKey], commentId]
+              : votedComments[voteTypeKey].filter((id) => id !== commentId),
+        };
+        setVotedComments(newVotedComments);
+        localStorage.setItem(
+          `votes_${postId}_${userId}`,
+          JSON.stringify(newVotedComments)
+        );
+      }
+    } catch (error) {
+      console.error('Error voting:', error);
+    } finally {
+      // Clear voting in progress after a short delay
+      setTimeout(() => {
+        setVotingInProgress((prev) => ({ ...prev, [voteKey]: false }));
+      }, 500);
+    }
   };
 
   return (
@@ -323,6 +467,44 @@ const CommentSection = ({ postId }: { postId: string }) => {
                   </div>
                   <div className="pl-4 border-l-4 border-indigo-200 dark:border-indigo-700 text-gray-800 dark:text-gray-200 mt-1 text-base leading-relaxed">
                     {c.comment}
+                  </div>
+                  <div className="flex items-center gap-4 mt-3">
+                    <button
+                      onClick={() => handleVote(c._id, 'like')}
+                      disabled={votingInProgress[`${c._id}_like`]}
+                      className={`flex items-center gap-1 transition-colors ${
+                        votedComments.likes.includes(c._id)
+                          ? 'text-pink-500 hover:text-pink-600'
+                          : 'text-gray-500 hover:text-pink-500'
+                      } ${votingInProgress[`${c._id}_like`] ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <FaHeart
+                        className={
+                          votedComments.likes.includes(c._id)
+                            ? 'text-pink-500'
+                            : ''
+                        }
+                      />
+                      <span className="text-sm">{c.likes || 0}</span>
+                    </button>
+                    <button
+                      onClick={() => handleVote(c._id, 'upvote')}
+                      disabled={votingInProgress[`${c._id}_upvote`]}
+                      className={`flex items-center gap-1 transition-colors ${
+                        votedComments.upvotes.includes(c._id)
+                          ? 'text-indigo-500 hover:text-indigo-600'
+                          : 'text-gray-500 hover:text-indigo-500'
+                      } ${votingInProgress[`${c._id}_upvote`] ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <FaArrowUp
+                        className={`transition-colors ${
+                          votedComments.upvotes.includes(c._id)
+                            ? 'text-indigo-500'
+                            : ''
+                        }`}
+                      />
+                      <span className="text-sm">{c.upvotes || 0}</span>
+                    </button>
                   </div>
                 </div>
               </li>
