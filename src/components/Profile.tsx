@@ -2,6 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
+import Image from 'next/image';
 import { FaLinkedin } from 'react-icons/fa'; // Import LinkedIn logo from react-icons
 
 export default function Profile() {
@@ -83,9 +84,11 @@ export default function Profile() {
           >
             <div className="relative">
               <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-pink-400 via-purple-400 to-blue-500 opacity-70 blur-2xl animate-pulse" />
-              <img
+              <Image
                 src="/images/me.jpeg"
                 alt="Author Picture"
+                width={240}
+                height={240}
                 className="relative z-10 rounded-full w-60 h-60 object-cover border-4 border-gray-300 dark:border-gray-700"
               />
             </div>

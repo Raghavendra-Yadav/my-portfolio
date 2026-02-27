@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { sanityClient } from '@/sanity/lib/sanity';
 import { PortableText } from '@portabletext/react';
 import SlugNavbar from '@/components/SlugNavbar';
+import Image from 'next/image';
 
 interface Summary {
   title: string;
@@ -176,9 +177,11 @@ const SummaryPage = ({ summary }: { summary: Summary }) => {
             <article className="py-24">
               {summary.coverImage?.asset?.url && (
                 <div className="flex justify-center mb-8">
-                  <img
+                  <Image
                     src={summary.coverImage.asset.url}
                     alt={summary.coverImage.alt || summary.title}
+                    width={160}
+                    height={240}
                     className="w-40 h-60 object-cover rounded-xl shadow-lg"
                   />
                 </div>

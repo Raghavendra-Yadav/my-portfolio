@@ -1,64 +1,92 @@
-# My Portfolio
+# Golla Raghavendra Yadav - Developer Portfolio
 
-This is a personal portfolio built using Next.js, Tailwind CSS, and various modern web technologies. The portfolio showcases my projects, blog posts, and provides information about me.
+Welcome to the source code for my personal portfolio website! This project is a modern, responsive, and highly interactive web application built to showcase my skills as a Full Stack Web Developer, Designer, Author, and Illustrator.
 
-## Tech Stack
+## 🚀 Live Demo
 
-- **Frontend**: Next.js (React)
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Content Management**: Sanity.io (or Notion via API)
-- **Deployment**: Vercel
-- **Form Handling**: Formspree / Resend / EmailJS
-- **Analytics**: Plausible / Vercel Analytics / Google Analytics
-- **TypeScript**: Optional for better code quality
+You can view the live website here: [https://www.gollaraghavendrayadav.com](https://www.gollaraghavendrayadav.com)
 
-## Features
+## ✨ Features
 
-- SEO-friendly pages for better visibility
-- Fast and dynamic user experience
-- Responsive design using utility-first CSS
-- Smooth animations and transitions
-- Real-time content management with a headless CMS
+- **Modern & Interactive UI:** Built using custom Animated Backgrounds and responsive Grid layouts that work seamlessly across desktop and mobile devices.
+- **Smooth Animations:** Integrated with `framer-motion` to provide fluid page transitions, scroll interactions, and micro-animations.
+- **Dynamic Content Management:** Deeply woven with **Sanity.io CMS** to manage Articles (Blog) and Book Summaries without touching the frontend code.
+- **Performance Optimized (Next.js 15):** 
+  - Utilizing `next/image` to dynamically resize, compress, and serve assets.
+  - Employing **Incremental Static Regeneration (ISR)** to lazily revalidate Sanity CMS content in the background, minimizing build times while maintaining blistering fast TTFB (Time to First Byte).
+- **Interactive Comments & Reactions:** An integrated API voting and commenting architecture running securely via Next.js App Router API endpoints (`app/api`).
 
-## Getting Started
+## 🛠️ Technology Stack
 
-To get a local copy up and running, follow these simple steps:
+| Category | Technologies |
+| --- | --- |
+| **Frontend Framework** | Next.js 15.3 (Pages & App Router Hybrid), React 19 |
+| **Styling** | Tailwind CSS 3.3, Vanilla CSS, Styled-Components |
+| **Headless CMS** | Sanity.io (mounted directly at `/studio`) |
+| **Animation Engine** | Framer Motion |
+| **Icons & Assets** | React Icons, Heroicons |
+| **Typing & Tooling** | TypeScript, ESLint, Prettier |
+| **Deployment** | Vercel |
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/my-portfolio.git
-   ```
+## 📁 Project Structure
 
-2. **Navigate to the project directory**
-   ```bash
-   cd my-portfolio
-   ```
+This project uses a mix of Next.js architectural patterns:
 
-3. **Install dependencies**
-   ```bash
-   npm install
-   ```
+- `src/pages/`: Contains the primary public-facing pages (Home, About, Blog, Book Summaries, Projects).
+- `src/app/api/`: Contains Serverless API Handlers for interactive comment upvoting and SSE (Server-Sent Events) capabilities.
+- `src/app/studio/`: Hosts the embedded Sanity Studio v3 environment built directly into the same deployed domain.
+- `src/components/`: Reusable UI modules, such as `Hero`, `Projects`, `Certificates`, and `AnimatedBackground`.
+- `src/sanity/`: Contains schemas and configuration files connecting the application deeply to Sanity.io.
 
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
+## 💻 Running the Project Locally
 
-5. **Open your browser and visit**
-   ```
-   http://localhost:3000
-   ```
+### Prerequisites
 
-## Deployment
+Ensure you have **Node.js** (v18 or higher) and **npm** installed on your machine.
+You will also need a **Sanity.io** account and project setup.
 
-This project is optimized for deployment on Vercel. You can easily deploy it by connecting your GitHub repository to Vercel and following the deployment instructions.
+### 1. Clone the Repository
 
-## Acknowledgements
+```bash
+git clone https://github.com/your-username/my-portfolio.git
+cd my-portfolio
+```
 
-- Thanks to the creators of Next.js, Tailwind CSS, and all the other technologies used in this project.
-- Inspiration from various portfolio designs and templates.
+### 2. Install Dependencies
 
-## License
+```bash
+npm install
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### 3. Environment Variables Setup
+
+Create a `.env.local` file at the root of your directory with the following variables retrieved from your Sanity Dashboard:
+
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID="your_project_id"
+NEXT_PUBLIC_SANITY_DATASET="production"
+# Add any API Write Tokens required for comments/votes
+# SANITY_API_TOKEN="your_write_token"
+```
+
+### 4. Run the Development Server
+
+```bash
+npm run dev
+```
+
+Your application will be accessible at [http://localhost:3000](http://localhost:3000).
+Your Sanity Studio will be accessible at [http://localhost:3000/studio](http://localhost:3000/studio).
+
+## 🚀 Deployment
+
+The site is optimized for one-click deployment via **Vercel**. 
+
+Before deploying to production:
+1. Ensure all environment variables are securely added to your hosting platform's dashboard.
+2. In your Sanity Studio management panel (sanity.io/manage), make sure you whitelist your production URL in the **CORS Origins** settings.
+3. Build the application locally to verify zero type-errors: `npm run build`.
+
+## 📄 License
+
+This project is open-source and available under the MIT License. Feel free to use architectural patterns from this repository for your own applications!
