@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { HomeIcon, MoonIcon, SunIcon } from '@heroicons/react/24/solid';
+import { useTheme } from 'next-themes';
 
 const navigation = [
   { name: 'Profile', href: '#Profile' },
@@ -17,8 +18,12 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  // Hydration safeguard
+  useEffect(() => setMounted(true), []);
 
   // Scroll state for header styling
   useEffect(() => {
@@ -29,14 +34,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Dark mode toggle
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
 
   // Active section tracking
   useEffect(() => {
@@ -64,11 +61,10 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled
           ? 'bg-white/90 backdrop-blur shadow-sm dark:bg-gray-900/90'
           : 'bg-transparent'
-      }`}
+        }`}
     >
       <nav
         className="flex items-center justify-between px-6 py-4 lg:px-8"
@@ -91,11 +87,10 @@ export default function Header() {
             <a
               key={item.name}
               href={item.href}
-              className={`text-sm font-semibold leading-6 px-3 py-1 rounded-full transition ${
-                activeSection === item.name
+              className={`text-sm font-semibold leading-6 px-3 py-1 rounded-full transition ${activeSection === item.name
                   ? 'bg-gradient-to-r from-purple-400/80 via-purple-500/80 to-purple-600/80 text-white shadow-lg'
                   : 'text-gray-900 dark:text-white'
-              }`}
+                }`}
             >
               {item.name}
             </a>
@@ -104,16 +99,18 @@ export default function Header() {
 
         {/* Right: Dark mode toggle */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="mr-10 text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
-          >
-            {darkMode ? (
-              <SunIcon className="h-5 w-5" aria-hidden="true" />
-            ) : (
-              <MoonIcon className="h-5 w-5" aria-hidden="true" />
-            )}
-          </button>
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="mr-10 text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
+            >
+              {theme === 'dark' ? (
+                <SunIcon className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <MoonIcon className="h-5 w-5" aria-hidden="true" />
+              )}
+            </button>
+          )}
         </div>
 
         {/* Mobile: Menu button */}
@@ -158,33 +155,34 @@ export default function Header() {
                   <a
                     key={item.name}
                     href={item.href}
-                    className={`block rounded-full px-3 py-2 text-base font-semibold transition ${
-                      activeSection === item.name
+                    className={`block rounded-full px-3 py-2 text-base font-semibold transition ${activeSection === item.name
                         ? 'bg-gradient-to-r from-purple-400/80 via-purple-500/80 to-purple-600/80 text-white shadow-lg'
                         : 'text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
-                    }`}
+                      }`}
                   >
                     {item.name}
                   </a>
                 ))}
               </div>
               <div className="py-6">
-                <button
-                  onClick={() => setDarkMode(!darkMode)}
-                  className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-2 rounded-lg"
-                >
-                  {darkMode ? (
-                    <>
-                      <SunIcon className="h-5 w-5" aria-hidden="true" />
-                      Light Mode
-                    </>
-                  ) : (
-                    <>
-                      <MoonIcon className="h-5 w-5" aria-hidden="true" />
-                      Dark Mode
-                    </>
-                  )}
-                </button>
+                {mounted && (
+                  <button
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-2 rounded-lg"
+                  >
+                    {theme === 'dark' ? (
+                      <>
+                        <SunIcon className="h-5 w-5" aria-hidden="true" />
+                        Light Mode
+                      </>
+                    ) : (
+                      <>
+                        <MoonIcon className="h-5 w-5" aria-hidden="true" />
+                        Dark Mode
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>

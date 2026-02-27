@@ -5,6 +5,7 @@ import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { HomeIcon, MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 
 const navigation = [
   { name: 'Blog', href: '/blog' },
@@ -15,8 +16,11 @@ const navigation = [
 const PageNavbar = ({ children }: { children: React.ReactNode }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,23 +30,15 @@ const PageNavbar = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-          scrolled
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled
             ? 'bg-white/90 backdrop-blur shadow-sm dark:bg-gray-900/90'
             : 'bg-transparent'
-        }`}
+          }`}
       >
         <nav
           className="flex items-center justify-between px-6 py-4 lg:px-8"
@@ -63,11 +59,10 @@ const PageNavbar = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm font-semibold leading-6 px-3 py-1 rounded-full transition ${
-                  router.pathname.startsWith(item.href)
+                className={`text-sm font-semibold leading-6 px-3 py-1 rounded-full transition ${router.pathname.startsWith(item.href)
                     ? 'bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 text-white shadow-lg'
                     : 'text-gray-900 dark:text-white hover:text-indigo-500'
-                }`}
+                  }`}
               >
                 {item.name}
               </Link>
@@ -75,16 +70,18 @@ const PageNavbar = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="mr-10 text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
-            >
-              {darkMode ? (
-                <SunIcon className="h-5 w-5" aria-hidden="true" />
-              ) : (
-                <MoonIcon className="h-5 w-5" aria-hidden="true" />
-              )}
-            </button>
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="mr-10 text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
+              >
+                {theme === 'dark' ? (
+                  <SunIcon className="h-5 w-5" aria-hidden="true" />
+                ) : (
+                  <MoonIcon className="h-5 w-5" aria-hidden="true" />
+                )}
+              </button>
+            )}
           </div>
 
           <div className="flex lg:hidden">
@@ -136,22 +133,24 @@ const PageNavbar = ({ children }: { children: React.ReactNode }) => {
                   ))}
                 </div>
                 <div className="py-6">
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-2 rounded-lg"
-                  >
-                    {darkMode ? (
-                      <>
-                        <SunIcon className="h-5 w-5" aria-hidden="true" />
-                        Light Mode
-                      </>
-                    ) : (
-                      <>
-                        <MoonIcon className="h-5 w-5" aria-hidden="true" />
-                        Dark Mode
-                      </>
-                    )}
-                  </button>
+                  {mounted && (
+                    <button
+                      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                      className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-2 rounded-lg"
+                    >
+                      {theme === 'dark' ? (
+                        <>
+                          <SunIcon className="h-5 w-5" aria-hidden="true" />
+                          Light Mode
+                        </>
+                      ) : (
+                        <>
+                          <MoonIcon className="h-5 w-5" aria-hidden="true" />
+                          Dark Mode
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
