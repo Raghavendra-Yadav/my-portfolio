@@ -4,12 +4,16 @@ import { sanityClient } from '@/sanity/lib/sanity';
 import { PortableText } from '@portabletext/react';
 import SlugNavbar from '@/components/SlugNavbar';
 import Image from 'next/image';
+import CommentSection from '@/components/CommentSection';
+import Footer from '@/components/Footer';
 
 interface Summary {
   title: string;
   summary: any[];
   author: string;
   publishedAt: string;
+  _id?: string;
+  slug?: { current: string; };
   coverImage?: {
     asset: {
       url: string;
@@ -81,6 +85,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     summary,
     author,
     publishedAt,
+    _id,
+    slug,
     coverImage{asset->{url}, alt}
   }`;
   const summary = await sanityClient.fetch(query, { slug: params?.slug });
@@ -114,7 +120,7 @@ const SummaryPage = ({ summary }: { summary: Summary }) => {
 
   return (
     <SlugNavbar>
-      <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white relative">
+      <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white relative">
         {/* TOC like blog */}
         {toc.length > 0 && (
           <div
@@ -196,8 +202,10 @@ const SummaryPage = ({ summary }: { summary: Summary }) => {
                 <PortableText value={summary.summary} components={components} />
               </div>
             </article>
+            <CommentSection postId={summary._id || summary.slug?.current || "fallback"} />
           </div>
         </main>
+        <Footer />
       </div>
     </SlugNavbar>
   );

@@ -32,8 +32,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
 function BookSummariesLanding() {
   return (
-    <section className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 via-blue-100 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
-      <AnimatedBackground theme="purple" />
+    <section className="relative flex items-center justify-center min-h-screen bg-white dark:bg-black overflow-hidden">
+      <AnimatedBackground theme="pink" />
 
       <motion.div
         className="max-w-2xl mx-auto text-center py-24 px-4 z-10"
